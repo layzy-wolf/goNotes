@@ -1,0 +1,40 @@
+version: "1"
+
+volumes:
+  nginx:
+  go:
+  db:
+
+services:
+  nginx:
+    build: "./bin/nginx"
+    container_name: ${COMPOSE_NAME}-nginx
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - "go"
+
+  go:
+    build:
+      context: "."
+      dockerfile: "./bin/go/Dockerfile"
+    container_name: ${COMPOSE_NAME}lang
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./go:/go/src/app"
+
+  db:
+    image: postgres:alpine
+    container_name: ${COMPOSE_NAME}-db
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./db:/var/lib/postgresql"
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
