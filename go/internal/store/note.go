@@ -20,7 +20,7 @@ func (s *store) GetAllNotes(ctx context.Context) ([]Note, error) {
 	return notes, nil
 }
 
-func (s *store) GetNote(ctx context.Context, id uint) (Note, error) {
+func (s *store) GetNote(ctx context.Context, id string) (Note, error) {
 	var note Note
 	err := s.db.WithContext(ctx).First(&note, id).Error
 	if err != nil {
@@ -39,8 +39,8 @@ func (s *store) CreateNote(ctx context.Context, content string) error {
 	return nil
 }
 
-func (s *store) EditNote(ctx context.Context, id uint, content string) error {
-	note := Note{}
+func (s *store) EditNote(ctx context.Context, id string, content string) error {
+	var note Note
 	err := s.db.WithContext(ctx).First(&note, id).Update("content", content).Error
 	if err != nil {
 		return err
@@ -48,9 +48,9 @@ func (s *store) EditNote(ctx context.Context, id uint, content string) error {
 	return nil
 }
 
-func (s *store) DeleteNote(ctx context.Context, id uint) error {
-	note := Note{}
-	err := s.db.WithContext(ctx).First(&note, id).Delete(&note).Error
+func (s *store) DeleteNote(ctx context.Context, id string) error {
+	var note Note
+	err := s.db.WithContext(ctx).Delete(&note, id).Error
 	if err != nil {
 		return err
 	}

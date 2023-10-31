@@ -21,16 +21,14 @@ func New(app app.App) *Api {
 
 func (s Api) SetupRoutes() {
 	s.engine.Use(gin.Recovery())
-	api := s.engine.Group("/api")
+
+	notes := s.engine.Group("/notes")
 	{
-		notes := api.Group("/notes")
-		{
-			notes.GET("", s.GetAllNotes)
-			notes.GET("/:id", s.GetNote)
-			notes.GET("/delete/:id", s.DeleteNote)
-			notes.POST("", s.CreateNote)
-			notes.POST("/edit/:id", s.EditNotes)
-		}
+		notes.GET("", s.GetAllNotes)
+		notes.GET("/:id", s.GetNote)
+		notes.GET("/delete/:id", s.DeleteNote)
+		notes.POST("", s.CreateNote)
+		notes.POST("/edit/:id", s.EditNote)
 	}
 }
 

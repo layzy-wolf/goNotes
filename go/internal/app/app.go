@@ -7,10 +7,10 @@ import (
 
 type App interface {
 	GetAllNotes(ctx context.Context) ([]store.Note, error)
-	GetNote(ctx context.Context, id uint) (store.Note, error)
+	GetNote(ctx context.Context, id string) (store.Note, error)
 	CreateNote(ctx context.Context, content string) error
-	EditNotes(ctx context.Context, id uint, content string) error
-	DeleteNote(ctx context.Context, id uint) error
+	EditNote(ctx context.Context, id string, content string) error
+	DeleteNote(ctx context.Context, id string) error
 }
 
 type app struct {

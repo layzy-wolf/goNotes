@@ -6,6 +6,10 @@ import (
 	"net/http"
 )
 
+type noteBind struct {
+	Id string `uri:"id" binding:"required"`
+}
+
 type note struct {
 	Id      uint   `json:"id"`
 	Content string `json:"content"`
@@ -28,17 +32,21 @@ func (s *Api) GetAllNotes(c *gin.Context) {
 }
 
 func (s *Api) GetNote(c *gin.Context) {
+	var noteBind noteBind
+	if err := c.ShouldBindUri(&noteBind); err != nil {
+		logrus.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "incorrect index",
+		})
+		return
+	}
+	noteList, err := s.app.GetNote(c, noteBind.Id)
 	var note note
 	if err := c.ShouldBindUri(&note.Id); err != nil {
 		logrus.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": err,
 		})
-		return
-	}
-	noteList, err := s.app.GetNote(c, note.Id)
-	if err != nil {
-		logrus.Println(err.Error())
 		return
 	}
 
@@ -66,12 +74,12 @@ func (s *Api) CreateNote(c *gin.Context) {
 	})
 }
 
-func (s *Api) EditNotes(c *gin.Context) {
-	var noteItem note
-	if err := c.ShouldBindUri(&noteItem.Id); err != nil {
+func (s *Api) EditNote(c *gin.Context) {
+	var noteBind noteBind
+	if err := c.ShouldBindUri(&noteBind); err != nil {
 		logrus.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": err,
+			"message": "incorrect index",
 		})
 		return
 	}
@@ -82,7 +90,7 @@ func (s *Api) EditNotes(c *gin.Context) {
 		return
 	}
 
-	if err := s.app.EditNotes(c, noteItem.Id, note.Content); err != nil {
+	if err := s.app.EditNote(c, noteBind.Id, note.Content); err != nil {
 		logrus.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err,
@@ -95,16 +103,17 @@ func (s *Api) EditNotes(c *gin.Context) {
 }
 
 func (s *Api) DeleteNote(c *gin.Context) {
-	var noteItem note
-	if err := c.ShouldBindUri(&noteItem.Id); err != nil {
+
+	var noteBind noteBind
+	if err := c.ShouldBindUri(&noteBind); err != nil {
 		logrus.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": err,
+			"message": "incorrect index",
 		})
 		return
 	}
 
-	if err := s.app.DeleteNote(c, noteItem.Id); err != nil {
+	if err := s.app.DeleteNote(c, noteBind.Id); err != nil {
 		logrus.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err,

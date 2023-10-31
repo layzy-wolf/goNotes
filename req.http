@@ -1,0 +1,24 @@
+### GetAllNotes
+GET localhost/api/notes
+
+
+### CreateNote
+POST localhost/api/notes
+Content-type: application/json
+
+
+{"content" : "example content"}
+
+### GetNote
+GET localhost/api/notes/1
+
+### DeleteNote
+GET localhost/api/notes/delete/6
+
+### EditNote
+POST localhost/api/notes/edit/1
+Content-Type: application/json
+
+{
+  "content" : "example edit"
+}
